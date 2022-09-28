@@ -1,16 +1,14 @@
 package com.nbw.booksearchapp.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.nbw.booksearchapp.data.model.SearchResponse
 import com.nbw.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BookSearchViewModel(
-    private val bookSearchRepository: BookSearchRepository
+    private val bookSearchRepository: BookSearchRepository,
+    private val savedSateHandle: SavedStateHandle
 ) : ViewModel() {
 
     // API
@@ -24,5 +22,20 @@ class BookSearchViewModel(
                 _searchResult.postValue(body)
             }
         }
+    }
+
+    // SaveState
+    var query = String()
+        set(value) {
+            field = value
+            savedSateHandle.set(SAVE_STATE_KEY, value)
+        }
+
+    init {
+        query = savedSateHandle.get<String>(SAVE_STATE_KEY) ?: ""
+    }
+
+    companion object {
+        private const val SAVE_STATE_KEY = "query"
     }
 }
