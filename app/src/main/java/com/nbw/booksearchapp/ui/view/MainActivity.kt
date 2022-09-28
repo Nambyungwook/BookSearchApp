@@ -1,11 +1,9 @@
-package com.nbw.booksearchapp
+package com.nbw.booksearchapp.ui.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.nbw.booksearchapp.R
 import com.nbw.booksearchapp.databinding.ActivityMainBinding
-import com.nbw.booksearchapp.ui.view.FavoriteFragment
-import com.nbw.booksearchapp.ui.view.SearchFragment
-import com.nbw.booksearchapp.ui.view.SettingFragment
 
 class MainActivity : AppCompatActivity() {
 
