@@ -10,6 +10,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.nbw.booksearchapp.R
+import com.nbw.booksearchapp.data.db.BookSearchDatabase
 import com.nbw.booksearchapp.data.repository.BookSearchRepositoryImpl
 import com.nbw.booksearchapp.databinding.ActivityMainBinding
 import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
@@ -35,7 +36,8 @@ class MainActivity : AppCompatActivity() {
 //        }
         setupJetpackNavigation()
 
-        val bookSearchRepository = BookSearchRepositoryImpl()
+        val database = BookSearchDatabase.getInstance(this)
+        val bookSearchRepository = BookSearchRepositoryImpl(database)
         val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
         bookSearchViewModel = ViewModelProvider(this, factory)[BookSearchViewModel::class.java]
     }
