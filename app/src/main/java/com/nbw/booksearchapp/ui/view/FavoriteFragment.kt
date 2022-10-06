@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.nbw.booksearchapp.databinding.FragmentFavoriteBinding
 import com.nbw.booksearchapp.ui.adapter.BookSearchAdapter
 import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nbw.booksearchapp.util.collectLatestStateFlow
 
 class FavoriteFragment : Fragment() {
     private var _binding: FragmentFavoriteBinding? = null
@@ -38,7 +39,28 @@ class FavoriteFragment : Fragment() {
         setupRecyclerView()
         setupTouchHelper(view)
 
-        bookSearchViewModel.favoriteBooks.observe(viewLifecycleOwner) {
+        // Livedata observe 부분 삭제
+//        bookSearchViewModel.favoriteBooks.observe(viewLifecycleOwner) {
+//            bookSearchAdapter.submitList(it)
+//        }
+
+        // flow로 변경
+//        lifecycleScope.launch {
+//            bookSearchViewModel.favoriteBooks.collectLatest {
+//                bookSearchAdapter.submitList(it)
+//            }
+//        }
+
+        // StateFlow 구독으로 변경
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                bookSearchViewModel.favoriteBooks.collectLatest {
+//                    bookSearchAdapter.submitList(it)
+//                }
+//            }
+//        }
+        // StateFlow를 구독하기 위한 boilerplate 코드가 길어짐 이를 극복하기 위해 확장 함수를 만들어서 사용할 수 있음
+        collectLatestStateFlow(bookSearchViewModel.favoriteBooks) {
             bookSearchAdapter.submitList(it)
         }
     }

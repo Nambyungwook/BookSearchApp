@@ -5,6 +5,9 @@ import com.nbw.booksearchapp.data.model.Book
 import com.nbw.booksearchapp.data.model.SearchResponse
 import com.nbw.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BookSearchViewModel(
@@ -34,7 +37,11 @@ class BookSearchViewModel(
         bookSearchRepository.deleteBooks(book)
     }
 
-    val favoriteBooks: LiveData<List<Book>> = bookSearchRepository.getFavoriteBooks()
+
+    //    val favoriteBooks: Flow<List<Book>> = bookSearchRepository.getFavoriteBooks()
+    // Flow -> StateFlow로 변경하여 FavoriteFragment의 라이프사이클과 동기화 시킴
+    val favoriteBooks: StateFlow<List<Book>> = bookSearchRepository.getFavoriteBooks()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf())
 
     // SaveState
     var query = String()
