@@ -1,7 +1,11 @@
 package com.nbw.booksearchapp.ui.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -15,6 +19,7 @@ import com.nbw.booksearchapp.data.repository.BookSearchRepositoryImpl
 import com.nbw.booksearchapp.databinding.ActivityMainBinding
 import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModelProviderFactory
+import com.nbw.booksearchapp.util.Constants.DATASTORE_NAME
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
@@ -24,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var bookSearchViewModel: BookSearchViewModel
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    // DataStore의 Singleton 객체 생성
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(DATASTORE_NAME)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         setupJetpackNavigation()
 
         val database = BookSearchDatabase.getInstance(this)
-        val bookSearchRepository = BookSearchRepositoryImpl(database)
+        val bookSearchRepository = BookSearchRepositoryImpl(database, dataStore)
         val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
         bookSearchViewModel = ViewModelProvider(this, factory)[BookSearchViewModel::class.java]
     }
