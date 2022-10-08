@@ -7,10 +7,7 @@ import com.nbw.booksearchapp.data.model.Book
 import com.nbw.booksearchapp.data.model.SearchResponse
 import com.nbw.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -76,4 +73,17 @@ class BookSearchViewModel(
         bookSearchRepository.getFavoritePagingBooks()
             .cachedIn(viewModelScope) // 코루틴이 데이터 스트림을 캐시하고 공유가능하게 함
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
+
+    private val _searchPagingResult = MutableStateFlow<PagingData<Book>>(PagingData.empty())
+    val searchPagingResult: StateFlow<PagingData<Book>> = _searchPagingResult.asStateFlow()
+
+    fun searchBooksPaging(query: String) {
+        viewModelScope.launch {
+            bookSearchRepository.searchBooksPaging(query, getSortMode())
+                .cachedIn(viewModelScope)
+                .collect() {
+                    _searchPagingResult.value = it
+                }
+        }
+    }
 }
