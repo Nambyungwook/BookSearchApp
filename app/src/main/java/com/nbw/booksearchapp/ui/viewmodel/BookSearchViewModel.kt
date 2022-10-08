@@ -1,6 +1,8 @@
 package com.nbw.booksearchapp.ui.viewmodel
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nbw.booksearchapp.data.model.Book
 import com.nbw.booksearchapp.data.model.SearchResponse
 import com.nbw.booksearchapp.data.repository.BookSearchRepository
@@ -68,4 +70,10 @@ class BookSearchViewModel(
     suspend fun getSortMode() = withContext(Dispatchers.IO) {
         bookSearchRepository.getSortMode().first()
     }
+
+    // Paging
+    val favoritePagingBooks: StateFlow<PagingData<Book>> =
+        bookSearchRepository.getFavoritePagingBooks()
+            .cachedIn(viewModelScope) // 코루틴이 데이터 스트림을 캐시하고 공유가능하게 함
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 }
