@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,15 +16,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nbw.booksearchapp.databinding.FragmentSearchBinding
 import com.nbw.booksearchapp.ui.adapter.BookSearchLoadStateAdapter
 import com.nbw.booksearchapp.ui.adapter.BookSearchPagingAdapter
-import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nbw.booksearchapp.ui.viewmodel.SearchViewModel
 import com.nbw.booksearchapp.util.Constants.SEARCH_BOOKS_TIME_DELAY
 import com.nbw.booksearchapp.util.collectLatestStateFlow
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var bookSearchViewModel: BookSearchViewModel
+    // hilt를 사용해서 viewmodel 주입
+//    private lateinit var bookSearchViewModel: BookSearchViewModel
+//    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    private val searchViewModel by viewModels<SearchViewModel>()
 
     // PagingAdapter로 변경
 //    private lateinit var bookSearchAdapter: BookSearchAdapter
@@ -40,7 +46,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+//        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
 
         setupRecyclerView()
         searchBooks()
@@ -52,7 +58,7 @@ class SearchFragment : Fragment() {
 //            bookSearchAdapter.submitList(books)
 //        }
         // FavoriteFragment처럼 확장함수를 만들어서 구현
-        collectLatestStateFlow(bookSearchViewModel.searchPagingResult) {
+        collectLatestStateFlow(searchViewModel.searchPagingResult) {
             bookSearchAdapter.submitData(it)
         }
     }
@@ -88,7 +94,7 @@ class SearchFragment : Fragment() {
         var endTime: Long
 
         binding.etSearch.text =
-            Editable.Factory.getInstance().newEditable(bookSearchViewModel.query)
+            Editable.Factory.getInstance().newEditable(searchViewModel.query)
 
         binding.etSearch.addTextChangedListener { text: Editable? ->
             endTime = System.currentTimeMillis()
@@ -98,8 +104,8 @@ class SearchFragment : Fragment() {
                     if (query.isNotEmpty()) {
                         // ViewModel에서 PagingData를 불러오도록 변경
 //                        bookSearchViewModel.searchBooks(query)
-                        bookSearchViewModel.searchBooksPaging(query)
-                        bookSearchViewModel.query = query
+                        searchViewModel.searchBooksPaging(query)
+                        searchViewModel.query = query
                     }
                 }
             }

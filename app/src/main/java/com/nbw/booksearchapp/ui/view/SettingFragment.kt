@@ -6,18 +6,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.nbw.booksearchapp.R
 import com.nbw.booksearchapp.databinding.FragmentSettingBinding
-import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nbw.booksearchapp.ui.viewmodel.SettingViewModel
 import com.nbw.booksearchapp.util.Sort
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SettingFragment : Fragment() {
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var bookSearchViewModel: BookSearchViewModel
+    // hilt를 사용해서 viewmodel 주입
+//    private lateinit var bookSearchViewModel: BookSearchViewModel
+//    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    private val settingViewModel by viewModels<SettingViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +36,7 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+//        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
 
         saveSettings()
         loadSettings()
@@ -44,22 +50,22 @@ class SettingFragment : Fragment() {
                 R.id.rb_latest -> Sort.LATEST.value
                 else -> return@setOnCheckedChangeListener
             }
-            bookSearchViewModel.saveSortMode(value)
+            settingViewModel.saveSortMode(value)
         }
 
         binding.swCacheDelete.setOnCheckedChangeListener { _, isChecked ->
-            bookSearchViewModel.saveCacheDeleteMode(isChecked)
+            settingViewModel.saveCacheDeleteMode(isChecked)
             if (isChecked) {
-                bookSearchViewModel.setWork()
+                settingViewModel.setWork()
             } else {
-                bookSearchViewModel.deleteWork()
+                settingViewModel.deleteWork()
             }
         }
     }
 
     private fun loadSettings() {
         lifecycleScope.launch {
-            val buttonId = when (bookSearchViewModel.getSortMode()) {
+            val buttonId = when (settingViewModel.getSortMode()) {
                 Sort.ACCURACY.value -> R.id.rb_accuracy
                 Sort.LATEST.value -> R.id.rb_latest
                 else -> return@launch
@@ -69,13 +75,13 @@ class SettingFragment : Fragment() {
 
         // WorkManager
         lifecycleScope.launch {
-            val mode = bookSearchViewModel.getCacheDeleteMode()
+            val mode = settingViewModel.getCacheDeleteMode()
             binding.swCacheDelete.isChecked = mode
         }
     }
 
     private fun showWorkStatus() {
-        bookSearchViewModel.getWorkStatus().observe(viewLifecycleOwner) { workInfo ->
+        settingViewModel.getWorkStatus().observe(viewLifecycleOwner) { workInfo ->
             Log.d("WorkManager", workInfo.toString())
             if (workInfo.isEmpty()) {
                 binding.tvWorkStatus.text = "No works"

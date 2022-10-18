@@ -7,17 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.nbw.booksearchapp.databinding.FragmentBookBinding
-import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nbw.booksearchapp.ui.viewmodel.BookViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookFragment : Fragment() {
     private var _binding: FragmentBookBinding? = null
     private val binding get() = _binding!!
 
     private val args: BookFragmentArgs by navArgs<BookFragmentArgs>()
-    private lateinit var bookSearchViewModel: BookSearchViewModel
+
+    // hilt를 사용해서 viewmodel 주입
+//    private lateinit var bookSearchViewModel: BookSearchViewModel
+//    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    private val bookViewModel by viewModels<BookViewModel>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +39,7 @@ class BookFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+//        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
 
         val book = args.book
         binding.webview.apply {
@@ -41,7 +49,7 @@ class BookFragment : Fragment() {
         }
 
         binding.fabFavorite.setOnClickListener {
-            bookSearchViewModel.saveBook(book)
+            bookViewModel.saveBook(book)
             Snackbar.make(view, "Book has saved", Snackbar.LENGTH_SHORT).show()
         }
     }

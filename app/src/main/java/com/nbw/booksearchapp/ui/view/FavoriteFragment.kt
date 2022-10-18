@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -13,14 +14,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.nbw.booksearchapp.databinding.FragmentFavoriteBinding
 import com.nbw.booksearchapp.ui.adapter.BookSearchPagingAdapter
-import com.nbw.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nbw.booksearchapp.ui.viewmodel.FavoriteViewModel
 import com.nbw.booksearchapp.util.collectLatestStateFlow
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoriteFragment : Fragment() {
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var bookSearchViewModel: BookSearchViewModel
+    //hilt를 사용해서 viewmodel 주입
+//    private lateinit var bookSearchViewModel: BookSearchViewModel
+//    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     // PagingAdapter로 변경
 //    private lateinit var bookSearchAdapter: BookSearchAdapter
@@ -38,7 +44,7 @@ class FavoriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+//        bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
 
         setupRecyclerView()
         setupTouchHelper(view)
@@ -70,7 +76,7 @@ class FavoriteFragment : Fragment() {
 
         // favoritePagingBooks를 구독하게 변경
         // 페이징데이터는 시간에 따라 변화하는 특성을 가지기 때문에 반드시 collect가 아닌 collectLatest로 값을 구독해서 항상 기존에 Paging값을 캔슬하고 새 값을 구독
-        collectLatestStateFlow(bookSearchViewModel.favoritePagingBooks) {
+        collectLatestStateFlow(favoriteViewModel.favoritePagingBooks) {
             bookSearchAdapter.submitData(it)
         }
     }
@@ -121,10 +127,10 @@ class FavoriteFragment : Fragment() {
                 // Paging 응답은 null을 가질 수 있기 때문에 수정
                 val pagedBook = bookSearchAdapter.peek(position)
                 pagedBook?.let { book ->
-                    bookSearchViewModel.deleteBook(book)
+                    favoriteViewModel.deleteBook(book)
                     Snackbar.make(view, "Book has deleted", Snackbar.LENGTH_SHORT).apply {
                         setAction("Undo") {
-                            bookSearchViewModel.saveBook(book)
+                            favoriteViewModel.saveBook(book)
                         }
                     }.show()
                 }
