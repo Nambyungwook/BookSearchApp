@@ -49,6 +49,7 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+        animationsDisabled = true
     }
 }
 
@@ -65,6 +66,7 @@ dependencies {
 
     // Moshi
     implementation(Dependencies.MOSHI)
+    implementation("androidx.test.espresso:espresso-core:3.4.0")
     kapt(Dependencies.MOSHI_KAPT)
 
     // Okhttp
@@ -137,8 +139,12 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
 
     // 계측 테스트용
-    androidTestImplementation(Testing.ANDROID_JUNIT)
+    implementation(Testing.ANDROID_JUNIT)
     androidTestImplementation(Testing.ESPRESSO_CORE)
+    // Espresso의 적용 대상을 확장하기 위한 디펜턴시
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
+    // Hamcrest - waitFor()사용을 위함
+    androidTestImplementation("org.hamcrest:hamcrest:2.2")
     // Jetpack Test Core
     androidTestImplementation("androidx.test:core:1.4.0")
     // Assertion을 더 읽기 용이하게 해주는 Truth
