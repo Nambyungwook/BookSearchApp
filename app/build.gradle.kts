@@ -18,7 +18,8 @@ android {
         versionCode = DefaultConfig.VERSION_CODE
         versionName = DefaultConfig.VERSION_NAME
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.nbw.booksearchapp.HiltTestRunner"
     }
 
     buildTypes {
@@ -132,6 +133,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.8.1")
     testImplementation("androidx.test.ext:junit:1.1.3")
     testImplementation("androidx.test:core:1.4.0")
+    // 코루틴 테스트를 위한 디펜던시
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
 
     // 계측 테스트용
     androidTestImplementation(Testing.ANDROID_JUNIT)
@@ -144,5 +147,8 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     // 코루틴 테스트를 위한 디펜던시
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
+    // 테스트에 hilt 적용을 위한 디펜던시
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.43.2")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.43.2")
 
 }
