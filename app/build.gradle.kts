@@ -115,7 +115,14 @@ dependencies {
     implementation(Dependencies.HILT_EXTENSION_WORK)
     kapt(Dependencies.HILT_EXTENSION_KAPT)
 
+    // Testing
+    // 로컬 테스트용
     testImplementation(Testing.JUNIT4)
+    // Assertion을 더 읽기 용이하게 해주는 Truth
+    testImplementation("androidx.test.ext:truth:1.4.0")
+    // 테스트를 크기에 따라서 필터링할 수 있게 하는 Runner
+    testImplementation("androidx.test:runner:1.4.0")
+    // 계측 테스트용
     androidTestImplementation(Testing.ANDROID_JUNIT)
     androidTestImplementation(Testing.ESPRESSO_CORE)
 }
