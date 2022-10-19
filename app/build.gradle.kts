@@ -44,6 +44,11 @@ android {
     kapt {
         correctErrorTypes = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -122,7 +127,22 @@ dependencies {
     testImplementation("androidx.test.ext:truth:1.4.0")
     // 테스트를 크기에 따라서 필터링할 수 있게 하는 Runner
     testImplementation("androidx.test:runner:1.4.0")
+    // Robolectric
+    // JVM에서 사용되기 때문에 더 빠른 테스트를 수행할 수 있음
+    testImplementation("org.robolectric:robolectric:4.8.1")
+    testImplementation("androidx.test.ext:junit:1.1.3")
+    testImplementation("androidx.test:core:1.4.0")
+
     // 계측 테스트용
     androidTestImplementation(Testing.ANDROID_JUNIT)
     androidTestImplementation(Testing.ESPRESSO_CORE)
+    // Jetpack Test Core
+    androidTestImplementation("androidx.test:core:1.4.0")
+    // Assertion을 더 읽기 용이하게 해주는 Truth
+    androidTestImplementation("androidx.test.ext:truth:1.4.0")
+    // 테스트를 크기에 따라서 필터링할 수 있게 하는 Runner
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    // 코루틴 테스트를 위한 디펜던시
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
+
 }
